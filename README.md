@@ -48,7 +48,7 @@ ADR-2605282100 economy. **No new token is minted.**
 | Lexicons (`00-contracts/lexicons/com/etzhayyim/kawase/`) | 8 schemas (`depositAttestation` + `withdrawIntent` + `matchExecution` + `fxRateAttestation` + `poolStateReport` + `rebalanceAttestation` + `jurisdictionAttestation` + `silenKawaseReview`) | `validate-lexicons.py` 8/8 clean |
 | Solidity (`50-infra/etzhayyim-kawase-pool/`) | `src/KawaseYuiPool.sol` (R0 scaffold) + `foundry.toml` + `.gitignore` | 4/4 forge tests pass (constructor + G4 plumbing + G9 plumbing + R0 honesty) |
 | Python facade (`40-engine/kotoba_kawase/`) | `kotoba_kawase/__init__.py` + `kotoba_kawase/exceptions.py` (5 constitutional exceptions + KawaseError base) + `pyproject.toml` | 16/16 pytest pass (surface + R0 honesty + introspection + hierarchy + frozen dataclasses) |
-| Pregel cells (`40-engine/kotoba/crates/kotoba-kotodama/cells/kawase_*/`) | 5 cells (`pool_match` + `fx_oracle_watcher` + `rebalance_proposer` + `jurisdiction_compliance` + `silen_review`) | each raises `RuntimeError` on import per kotodama R0 convention |
+| Pregel cells (`kotoba-lang/kotodama-cells/kawase_*/`) | 5 cells (`pool_match` + `fx_oracle_watcher` + `rebalance_proposer` + `jurisdiction_compliance` + `silen_review`) | each raises `RuntimeError` on import per kotodama R0 convention |
 | Build-time lint (`70-tools/scripts/lint/`) | `verify_no_commercial_remittance.py` (G7) | 23/23 pytest pass; lefthook registered (`no-commercial-remittance`) |
 | Constitution wiring (`50-infra/etzhayyim-chain-contracts/`) | `KAWASE_MAX_BAND_BPS` const + `KAWASE_PER_MONTH_CAP_USD_MINOR` mutable | `test_kawase_yui_constants_set` in religious-corp wave test |
 
@@ -123,5 +123,5 @@ as follows:
 - `00-contracts/lexicons/com/etzhayyim/kawase/` — 8 Lexicons
 - `50-infra/etzhayyim-kawase-pool/` — Solidity L6
 - `40-engine/kotoba_kawase/` — Python facade
-- `40-engine/kotoba/crates/kotoba-kotodama/cells/kawase_*/` — 5 Pregel cells
+- `kotoba-lang/kotodama-cells/kawase_*/` — 5 Pregel cells
 - `70-tools/scripts/lint/verify_no_commercial_remittance.py` — G7

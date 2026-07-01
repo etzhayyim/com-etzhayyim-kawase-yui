@@ -5,7 +5,7 @@ per **ADR-2605282200** (kawase-yui — 為替結).
 
 `kotoba_kawase` is the **adherent-facing client surface** that sits above the
 L6 settlement layer (`50-infra/etzhayyim-kawase-pool/src/KawaseYuiPool.sol`)
-and the L4 match engine (`40-engine/kotoba/crates/kotoba-kotodama/cells/kawase_pool_match/`).
+and the L4 match engine (`kotoba-lang/kotodama-cells/kawase_pool_match/`).
 A yoro PWA or a kotoba LangGraph cell imports `kotoba_kawase` and calls
 `send(...)` + `claim(...)`; the package validates pre-flight, emits the
 intent CID, and returns audit-trail-compatible records.

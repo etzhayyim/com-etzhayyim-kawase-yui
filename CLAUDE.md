@@ -69,7 +69,7 @@ L6  KawaseYuiPool.sol contract family ────┤  Base L2 (USDC/EURC native
 L7  (audit) silenKawaseReview ────────────┘
 ```
 
-**5 Pregel cells** at `40-engine/kotoba/crates/kotoba-kotodama/cells/kawase_*/` (R0 scaffold
+**5 Pregel cells** at `kotoba-lang/kotodama-cells/kawase_*/` (R0 scaffold
 — RuntimeError on import per kotodama convention):
 
 ```
@@ -267,7 +267,7 @@ for cell in kawase_pool_match kawase_fx_oracle_watcher \
             kawase_rebalance_proposer \
             kawase_jurisdiction_compliance kawase_silen_review; do
   python3 -c "
-import sys; sys.path.insert(0, '40-engine/kotoba/crates/kotoba-kotodama/cells/$cell'); import cell"
+import sys; sys.path.insert(0, 'kotoba-lang/kotodama-cells/$cell'); import cell"
 done
 # → Each prints a RuntimeError with 'scaffold-only' + 'ADR-2605282200'
 ```
@@ -281,7 +281,7 @@ R1 deploy (post-Council ratify) lands as a separate runbook ADR.
 - `/00-contracts/lexicons/com/etzhayyim/kawase/` (8 Lexicons + README)
 - `/40-engine/kotoba_kawase/` (Python facade + 32 pytest)
 - `/50-infra/etzhayyim-kawase-pool/` (Solidity scaffold + 4 forge tests)
-- `/40-engine/kotoba/crates/kotoba-kotodama/cells/kawase_*/` (5 Pregel cell scaffolds)
+- `kotoba-lang/kotodama-cells/kawase_*/` (5 Pregel cell scaffolds)
 - `/70-tools/scripts/lint/verify_no_commercial_remittance.py` (G7; 23 pytest)
 - `/.github/workflows/kawase-yui-r0-audit.yml` (4-lane CI gate)
 - `/90-docs/adr/2605282200-kawase-yui-multi-stable-adherent-remittance-mutual-aid.md` — Master ADR

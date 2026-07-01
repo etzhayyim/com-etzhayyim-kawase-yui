@@ -195,7 +195,7 @@ _EXPECTED_CELLS = (
 
 
 def test_every_kawase_cell_raises_runtime_error_on_import() -> None:
-    base = _REPO_ROOT / "40-engine/kotoba/crates/kotoba-kotodama/cells"
+    base = _REPO_ROOT / "kotoba-lang/kotodama-cells"
     for cell_name in _EXPECTED_CELLS:
         cell_dir = base / cell_name
         assert cell_dir.is_dir(), f"Cell dir missing: {cell_dir}"
