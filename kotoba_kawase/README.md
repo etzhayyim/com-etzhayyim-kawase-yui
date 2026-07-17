@@ -5,7 +5,7 @@ per **ADR-2605282200** (kawase-yui — 為替結).
 
 `kotoba_kawase` is the **adherent-facing client surface** that sits above the
 L6 settlement layer (`50-infra/etzhayyim-kawase-pool/src/KawaseYuiPool.sol`)
-and the L4 match engine (`kotoba-lang/kotodama-cells/kawase_pool_match/`).
+and the L4 match engine (`40-engine/kotoba/crates/kotoba-kotodama/cells/kawase_pool_match/`).
 A yoro PWA or a kotoba LangGraph cell imports `kotoba_kawase` and calls
 `send(...)` + `claim(...)`; the package validates pre-flight, emits the
 intent CID, and returns audit-trail-compatible records.
@@ -53,7 +53,7 @@ The R1 implementation MUST honor these without exception:
 ## Related
 
 - `50-infra/etzhayyim-kawase-pool/` — Solidity L6 (KawaseYuiPool.sol)
-- `00-contracts/lexicons/com/etzhayyim/kawase/` — 8 Lexicons
+- `lex/` — 8 Lexicons
 - `70-tools/scripts/lint/verify_no_commercial_remittance.py` — G7
 - `40-engine/kotoba_murakumo/` — sibling package precedent (downstream
   consumer outside the kotoba subrepo)

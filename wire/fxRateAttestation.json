@@ -1,0 +1,70 @@
+{
+  "lexicon": 1,
+  "id": "com.etzhayyim.kawase.fxRateAttestation",
+  "description": "Chainlink mid-market rate snapshot Lexicon per ADR-2605282200 G4 — emitted by Pregel cell `kawase_fx_oracle_watcher` whenever a relevant Chainlink price-feed round updates. councilBandBps reflects the Constitution.sol const `kawase.max_band_bps` (= 50 = ±0.5%) at attestation time. `withinBand=false` halts ALL match activity for the affected pair until a Council Lv6+ ≥3 attestation chain resumes (separate operational record outside this Lexicon).",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "v",
+          "pair",
+          "midMarketRateNumerator",
+          "midMarketRateDenominator",
+          "chainlinkRoundId",
+          "chainlinkUpdatedAt",
+          "councilBandBps",
+          "withinBand",
+          "observedAt",
+          "attestingNodeDid"
+        ],
+        "properties": {
+          "v": { "type": "integer", "minimum": 1, "maximum": 1 },
+          "pair": {
+            "type": "string",
+            "enum": ["USD/EUR", "USD/JPY", "USD/KRW", "USD/GBP", "USD/CHF", "EUR/JPY", "EUR/GBP", "GBP/CHF"],
+            "description": "Currency pair ISO-4217 / ISO-4217. R1 enum = USD/EUR only; JPY/KRW/GBP/CHF pairs unlock as R2/R3 add stables."
+          },
+          "midMarketRateNumerator": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Chainlink answer (signed int256 in Solidity, but kawase only uses positive rates) as integer-numerator."
+          },
+          "midMarketRateDenominator": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "10^Chainlink.decimals(). Standard Chainlink price-feed decimals = 8 → 100000000."
+          },
+          "chainlinkRoundId": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Chainlink AggregatorV3Interface roundId at attestation. Used to detect stale rounds (cell rejects rounds older than 1 hour)."
+          },
+          "chainlinkUpdatedAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "Chainlink AggregatorV3Interface updatedAt converted to ISO-8601."
+          },
+          "councilBandBps": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000,
+            "description": "Council-attested band tolerance at attestation time. Constitution.sol const kawase.max_band_bps. Default R0 = 50 (±0.5%)."
+          },
+          "withinBand": {
+            "type": "boolean",
+            "description": "false = a check against pool-internal locked rates exceeded ±councilBandBps; cell halts pair matching and escalates to chigiri.disputeMediation after 5min sustained."
+          },
+          "observedAt": { "type": "string", "format": "datetime" },
+          "attestingNodeDid": {
+            "type": "string",
+            "format": "did",
+            "description": "DID of the Murakumo fleet node that ran this oracle watcher tick. MUST be a fleet.toml-listed node per G12."
+          }
+        }
+      }
+    }
+  }
+}

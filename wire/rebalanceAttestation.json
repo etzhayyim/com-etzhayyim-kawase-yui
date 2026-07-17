@@ -1,0 +1,79 @@
+{
+  "lexicon": 1,
+  "id": "com.etzhayyim.kawase.rebalanceAttestation",
+  "description": "Council-authorized DEX rebalance Lexicon per ADR-2605282200 — emitted by `kawase_rebalance_proposer` cell as a candidate when |driftBps| > 500 (5%) for a paired pool, then Council Lv6+ ≥4/7 signs the attestation chain, then `KawaseYuiPool.rebalance()` consumes the signed record and executes the swap via the named DEX (R1 default: Aerodrome on Base). Rebalance frequency target: ≤1/month R1, ≤1/quarter R2. swapRateBps MUST be within ±100 bps (1%) of chainlinkRateBpsAtAttest (G6 yield-farming-adjacent risk avoidance; structurally tighter than the per-tx G4 ±0.5% band because aggregate slippage matters more on larger swaps).",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "v",
+          "rebalanceId",
+          "fromStable",
+          "toStable",
+          "swapAmountMinor",
+          "swapRateBps",
+          "chainlinkRateBpsAtAttest",
+          "councilAttestations",
+          "dexAddress",
+          "preSwapDriftBps",
+          "submittedAt"
+        ],
+        "properties": {
+          "v": { "type": "integer", "minimum": 1, "maximum": 1 },
+          "rebalanceId": {
+            "type": "string",
+            "description": "Monotonic UUID for this rebalance (kotoba content-addressed)."
+          },
+          "fromStable": {
+            "type": "string",
+            "enum": ["USDC", "EURC", "JPYC", "KRWO", "GBPe", "CHFe"]
+          },
+          "toStable": {
+            "type": "string",
+            "enum": ["USDC", "EURC", "JPYC", "KRWO", "GBPe", "CHFe"]
+          },
+          "swapAmountMinor": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Amount of fromStable being swapped (minor units). MUST be ≤ 10% of the weaker pool's balance at proposer time."
+          },
+          "swapRateBps": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Quoted execution rate at the named DEX (basis points). MUST be within ±100 bps of chainlinkRateBpsAtAttest."
+          },
+          "chainlinkRateBpsAtAttest": { "type": "integer", "minimum": 1 },
+          "councilAttestations": {
+            "type": "array",
+            "minLength": 4,
+            "maxLength": 7,
+            "description": "DIDs of Council members who attested this rebalance. R1+ ≥4 (Lv6+ ≥4/7 multisig threshold).",
+            "items": { "type": "string", "format": "did" }
+          },
+          "dexAddress": {
+            "type": "string",
+            "description": "Base L2 address of the Council-approved DEX (R1 default = Aerodrome `0xcF77a3Ba9A5CA399B7c97c74d54e5b1Beb874E43`). Council-approved set governed by separate ADR/Lexicon."
+          },
+          "preSwapDriftBps": {
+            "type": "integer",
+            "description": "|driftBps| from poolStateReport that triggered this proposal. MUST be > 500."
+          },
+          "txHash": {
+            "type": "string",
+            "description": "Set AFTER execution. Absent on the candidate record before Council sign-off + on-chain execution."
+          },
+          "blockNumber": { "type": "integer", "minimum": 1 },
+          "executedAt": { "type": "string", "format": "datetime" },
+          "postSwapDriftBps": {
+            "type": "integer",
+            "description": "Set AFTER execution. Should be near 0; |postSwapDriftBps| > 100 = anomalous slippage, triggers chigiri.disputeMediation."
+          },
+          "submittedAt": { "type": "string", "format": "datetime" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{:dependencies
+ [{:dependency/id etzhayyim/root
+   :dependency/repository "https://github.com/etzhayyim/root"
+   :dependency/revision "9fdcf95cf6e69e3fcea355392c02a2c2b86916bf"
+   :dependency/paths ["40-engine/kotoba/crates/kotoba-kotodama/cells"
+                      "50-infra/etzhayyim-chain-contracts"
+                      "50-infra/etzhayyim-kawase-pool"
+                      "70-tools/scripts/lint/verify_no_commercial_remittance.py"
+                      "90-docs/adr"]
+   :dependency/purpose #{:cells :contracts :pool :lint :adr :governance}}
+  {:dependency/id com.etzhayyim/chigiri
+   :dependency/repository "https://github.com/etzhayyim/com-etzhayyim-chigiri"
+   :dependency/revision "e08560129675106e0bb4b70e23769ff07a711ce7"}
+  {:dependency/id com.etzhayyim/toritate
+   :dependency/repository "https://github.com/etzhayyim/com-etzhayyim-toritate"
+   :dependency/revision "3354850aa05408e840426f91fe067ddad8535e5b"}
+  {:dependency/id com.etzhayyim/wakai
+   :dependency/repository "https://github.com/etzhayyim/com-etzhayyim-wakai"
+   :dependency/revision "2a2260dc4f331348016391501d0141baf2662052"}]}

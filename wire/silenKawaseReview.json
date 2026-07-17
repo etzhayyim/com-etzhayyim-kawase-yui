@@ -1,0 +1,113 @@
+{
+  "lexicon": 1,
+  "id": "com.etzhayyim.kawase.silenKawaseReview",
+  "description": "Quarterly Council audit Lexicon per ADR-2605282200 G5 + G7 — emitted by Pregel cell `kawase_silen_review` and counter-signed by Council Lv6+ ≥3 attestation chain. Includes const-field structural enforcement of the most critical gates: spreadProfitMkoto const 0 (G5), commercialRemittanceSoftwarePenetrationPct const 0 (G7), nonAdherentParticipationCount const 0 (G3). Any nonzero value in these const fields = critical finding, halts pool operations, triggers chigiri.disputeMediation + Council Lv7+ escalation.",
+  "defs": {
+    "perCcyVolumeRow": {
+      "type": "object",
+      "required": ["currency", "volumeMinor"],
+      "properties": {
+        "currency": {
+          "type": "string",
+          "enum": ["USDC", "EURC", "JPYC", "KRWO", "GBPe", "CHFe"]
+        },
+        "volumeMinor": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "v",
+          "reviewPeriodStart",
+          "reviewPeriodEnd",
+          "totalVolumeUsdEquivalentMinor",
+          "matchedSharePctIntegerHundredths",
+          "reserveDisbursedSharePctIntegerHundredths",
+          "avgMatchWaitSeconds",
+          "outOfBandHaltCount",
+          "spreadProfitMkoto",
+          "commercialRemittanceSoftwarePenetrationPct",
+          "nonAdherentParticipationCount",
+          "jurisdictionsActivated",
+          "councilAttestations",
+          "reportPublishedAt",
+          "reportCid"
+        ],
+        "properties": {
+          "v": { "type": "integer", "minimum": 1, "maximum": 1 },
+          "reviewPeriodStart": { "type": "string", "format": "datetime" },
+          "reviewPeriodEnd": { "type": "string", "format": "datetime" },
+          "totalVolumeUsdEquivalentMinor": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Sum of all flows during the review period, normalized to USD-equivalent minor units at locked depositAttestation.fxRateBps per flow."
+          },
+          "perCcyVolume": {
+            "type": "array",
+            "description": "Per-currency breakdown of volume (aggregate; no per-member amounts).",
+            "items": {
+              "type": "ref",
+              "ref": "#perCcyVolumeRow"
+            }
+          },
+          "matchedSharePctIntegerHundredths": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000,
+            "description": "Fraction of flows settled via counter-intent match (vs reserve buffer). Target ≥80.00% (= 8000) at R2+. R1 may be lower while pool flow is thin."
+          },
+          "reserveDisbursedSharePctIntegerHundredths": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "avgMatchWaitSeconds": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Mean wait between depositAttestation and matchExecution across the period."
+          },
+          "outOfBandHaltCount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of times fx_oracle_watcher cell halted matching due to withinBand=false. Target = 0. >0 = critical finding."
+          },
+          "spreadProfitMkoto": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 0,
+            "description": "G5 STRUCTURAL: const 0. Any nonzero value invalidates this report at schema layer and indicates a constitutional violation (mid-market only invariant breached)."
+          },
+          "commercialRemittanceSoftwarePenetrationPct": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 0,
+            "description": "G7 STRUCTURAL: const 0. Build-time lint at `70-tools/scripts/lint/verify_no_commercial_remittance.py` must show 0 imports of Wise / Western Union / MoneyGram / Remitly / WorldRemit / Xoom / Revolut / OFX / Currencies Direct / Ria / Paysend / Atlantic Money / Sendwave / Boss Revolution / PayPal-Xoom in the kawase-yui codebase."
+          },
+          "nonAdherentParticipationCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 0,
+            "description": "G3 STRUCTURAL: const 0. Solidity `onlyAdherent` modifier on KawaseYuiPool.deposit + KawaseYuiPool.claim enforces this at the L6 chain layer; any nonzero count here = indexer bug (cell-level G3 violation impossible because the contract reverts)."
+          },
+          "jurisdictionsActivated": {
+            "type": "array",
+            "description": "ISO-3166-1 alpha-3 codes of jurisdictions active during the review period (i.e., had at least one valid jurisdictionAttestation per ADR-2605282200 G14).",
+            "items": { "type": "string", "minLength": 3, "maxLength": 3 }
+          },
+          "councilAttestations": {
+            "type": "array",
+            "minLength": 3,
+            "maxLength": 7,
+            "description": "DIDs of Council members who attested this review. R1+ ≥3 (Lv6+ ≥3 threshold).",
+            "items": { "type": "string", "format": "did" }
+          },
+          "reportPublishedAt": { "type": "string", "format": "datetime" },
+          "reportCid": { "type": "string" }
+        }
+      }
+    }
+  }
+}

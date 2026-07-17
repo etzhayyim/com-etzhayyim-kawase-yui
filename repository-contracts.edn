@@ -1,0 +1,11 @@
+{:repository/name "com-etzhayyim-kawase-yui"
+ :repository/category :actor
+ :repository/canonical-format :edn
+ :repository/canonical-metadata "manifest.edn"
+ :repository/canonical-identity "identity.edn"
+ :repository/dependencies "dependencies.edn"
+ :repository/source-roots ["kotoba_kawase/kotoba_kawase"]
+ :repository/test-roots ["kotoba_kawase/tests"]
+ :repository/lexicons "lex"
+ :repository/external-wire "wire"
+ :repository/legacy-artifacts-forbidden ["manifest.jsonld"]}

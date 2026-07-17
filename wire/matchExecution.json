@@ -1,0 +1,76 @@
+{
+  "lexicon": 1,
+  "id": "com.etzhayyim.kawase.matchExecution",
+  "description": "Match engine output Lexicon per ADR-2605282200 — emitted by Pregel cell `kawase_pool_match` once per matched deposit. Records WHICH of the two settlement modes was used (matched against a counter-intent vs disbursed from reserve buffer), the mKOTO debit accrued for the cell's compute, and the FX rate attestation CID for replay. silenKawaseReview aggregates these to compute matchedSharePctIntegerHundredths (G5 target ≥80% at R2+).",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "v",
+          "matchEpoch",
+          "settlementMode",
+          "srcIntentCid",
+          "srcStable",
+          "tgtStable",
+          "srcAmountMinor",
+          "tgtAmountMinor",
+          "fxRateBps",
+          "fxRateAttestationCid",
+          "mKotoDebitAmount",
+          "executedAt"
+        ],
+        "properties": {
+          "v": { "type": "integer", "minimum": 1, "maximum": 1 },
+          "matchEpoch": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Pregel cell epoch number at which the match was executed."
+          },
+          "settlementMode": {
+            "type": "string",
+            "enum": ["matched", "reserve-disbursed"],
+            "description": "matched = counter withdrawIntent satisfied the deposit (no reserve consumed). reserve-disbursed = no counter intent within match_window_seconds; reserve buffer disbursed at locked rate. Pool drift_bps increments on reserve-disbursed flows."
+          },
+          "srcIntentCid": {
+            "type": "string",
+            "description": "depositAttestation.intentCid of the originating deposit."
+          },
+          "tgtIntentCid": {
+            "type": "string",
+            "description": "withdrawIntent.intentCid of the matched counter-intent. ABSENT when settlementMode = reserve-disbursed."
+          },
+          "srcStable": {
+            "type": "string",
+            "enum": ["USDC", "EURC", "JPYC", "KRWO", "GBPe", "CHFe"]
+          },
+          "tgtStable": {
+            "type": "string",
+            "enum": ["USDC", "EURC", "JPYC", "KRWO", "GBPe", "CHFe"]
+          },
+          "srcAmountMinor": { "type": "integer", "minimum": 1 },
+          "tgtAmountMinor": { "type": "integer", "minimum": 1 },
+          "fxRateBps": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Rate locked at depositAttestation creation. MUST be identical to depositAttestation.fxRateBps."
+          },
+          "fxRateAttestationCid": { "type": "string" },
+          "mKotoDebitAmount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "mKOTO debited from operator DID balance per ADR-2605282100 for this match cell tick. Royalty pool credit emitted symmetrically."
+          },
+          "executingCellDid": {
+            "type": "string",
+            "format": "did",
+            "description": "DID of the Murakumo fleet node that executed this match cell tick. MUST be a fleet.toml-listed node per G12 + ADR-2605215000."
+          },
+          "executedAt": { "type": "string", "format": "datetime" }
+        }
+      }
+    }
+  }
+}

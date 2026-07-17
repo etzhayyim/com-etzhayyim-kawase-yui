@@ -1,4 +1,4 @@
-# 20-actors/kawase-yui — CLAUDE.md
+# com-etzhayyim-kawase-yui — CLAUDE.md
 
 ## Identity
 
@@ -69,7 +69,7 @@ L6  KawaseYuiPool.sol contract family ────┤  Base L2 (USDC/EURC native
 L7  (audit) silenKawaseReview ────────────┘
 ```
 
-**5 Pregel cells** at `kotoba-lang/kotodama-cells/kawase_*/` (R0 scaffold
+**5 Pregel cells** at `40-engine/kotoba/crates/kotoba-kotodama/cells/kawase_*/` (R0 scaffold
 — RuntimeError on import per kotodama convention):
 
 ```
@@ -88,7 +88,7 @@ NotYetImplemented stubs; R1 fills in bodies.
 kotoba_murakumo per the ADR-2605282300 downstream-consumer relocation
 pattern (lives outside the kotoba subrepo).
 
-**8 Lexicons** at `00-contracts/lexicons/com/etzhayyim/kawase/` —
+**8 Lexicons** at `lex/` —
 deposit / withdraw intent / match execution / fx rate / pool state /
 rebalance / jurisdiction / silen review.
 
@@ -227,7 +227,7 @@ SBT-signed flow.
 | 3 | `4a312d500` | KawaseYuiPool.sol R0 scaffold (interface + modifiers + immutables) + Foundry project + 4 forge tests |
 | 4 | `e105d146d` | kotoba_kawase Python facade (5 exceptions + send/claim + frozen dataclasses) + 16 pytest |
 | 5 | `aecf9b262` | 5 Pregel cell R0 scaffolds (RuntimeError on import) — drops 5 (reserved) markers |
-| 6 | `0889371b4` | Actor root README + manifest.jsonld — drops the FINAL (reserved) marker |
+| 6 | `0889371b4` | Standalone README + canonical manifest.edn — drops the FINAL (reserved) marker |
 | 7 | `4a1187b90` | GitHub Actions workflow (`kawase-yui-r0-audit`) + 10 cross-layer composition tests |
 | 8 | `2ca8ef437` | Cross-actor reverse-references (wakai + chigiri + toritate manifests) + 4 symmetry tests |
 | 9 | `1ee9c8fb9` | Lexicon-dir README + ADR-2605282200 index entry + 2 documentation discoverability tests |
@@ -267,7 +267,7 @@ for cell in kawase_pool_match kawase_fx_oracle_watcher \
             kawase_rebalance_proposer \
             kawase_jurisdiction_compliance kawase_silen_review; do
   python3 -c "
-import sys; sys.path.insert(0, 'kotoba-lang/kotodama-cells/$cell'); import cell"
+import sys; sys.path.insert(0, '40-engine/kotoba/crates/kotoba-kotodama/cells/$cell'); import cell"
 done
 # → Each prints a RuntimeError with 'scaffold-only' + 'ADR-2605282200'
 ```
@@ -276,12 +276,12 @@ R1 deploy (post-Council ratify) lands as a separate runbook ADR.
 
 ## Related Files
 
-- `/20-actors/kawase-yui/manifest.jsonld` — ActorManifest JSON-LD
-- `/20-actors/kawase-yui/README.md` — Full inventory + 14 gates + R0→R3 ladder
-- `/00-contracts/lexicons/com/etzhayyim/kawase/` (8 Lexicons + README)
+- `manifest.edn` — ActorManifest JSON-LD
+- `README.md` — Full inventory + 14 gates + R0→R3 ladder
+- `/lex/` (8 Lexicons + README)
 - `/40-engine/kotoba_kawase/` (Python facade + 32 pytest)
 - `/50-infra/etzhayyim-kawase-pool/` (Solidity scaffold + 4 forge tests)
-- `kotoba-lang/kotodama-cells/kawase_*/` (5 Pregel cell scaffolds)
+- `/40-engine/kotoba/crates/kotoba-kotodama/cells/kawase_*/` (5 Pregel cell scaffolds)
 - `/70-tools/scripts/lint/verify_no_commercial_remittance.py` (G7; 23 pytest)
 - `/.github/workflows/kawase-yui-r0-audit.yml` (4-lane CI gate)
 - `/90-docs/adr/2605282200-kawase-yui-multi-stable-adherent-remittance-mutual-aid.md` — Master ADR

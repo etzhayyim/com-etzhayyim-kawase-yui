@@ -1,0 +1,52 @@
+{
+  "lexicon": 1,
+  "id": "com.etzhayyim.kawase.jurisdictionAttestation",
+  "description": "Per-jurisdiction Council Lv7+ unanimity activation Lexicon per ADR-2605282200 G14 — gates which sender↔recipient jurisdiction pairs are eligible for kawase-yui send/receive. Each activation is a CONSTITUTIONAL act requiring all 5 Council seats to sign the legalAnalysisCid (= chigiri.ipLicenseClaim or commentary chain establishing money-services-business non-applicability, securities-law non-applicability, AML/CFT non-applicability for that jurisdiction). Founding R1 jurisdictions = US + JP (Founder seat 1 covers both). EU + UK + KR + CH unlock as Council Seats 2-5 close (RFP open until 2026-06-19).",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "v",
+          "jurisdiction",
+          "activatedFor",
+          "legalAnalysisCid",
+          "councilAttestations",
+          "activatedAt"
+        ],
+        "properties": {
+          "v": { "type": "integer", "minimum": 1, "maximum": 1 },
+          "jurisdiction": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3,
+            "description": "ISO-3166-1 alpha-3 country code (e.g. USA / JPN / DEU / FRA / KOR / GBR / CHE)."
+          },
+          "activatedFor": {
+            "type": "string",
+            "enum": ["send", "receive", "both"],
+            "description": "Direction of activation. `both` requires the same legal analysis to cover both sender and recipient legs."
+          },
+          "legalAnalysisCid": {
+            "type": "string",
+            "description": "CID of the chigiri.ipLicenseClaim record (or equivalent legal analysis Lexicon) establishing the four non-applicabilities: (1) money-services-business license non-applicability under §1.12 routing-around + mutual-aid framing; (2) securities-law non-applicability (no token sale, mid-market only); (3) AML/CFT non-applicability under SBT-KYC + Charter §1.12; (4) tax-reporting position (typically: adherent-to-adherent personal mutual aid = recipient-side income reporting only)."
+          },
+          "councilAttestations": {
+            "type": "array",
+            "minLength": 5,
+            "maxLength": 7,
+            "description": "DIDs of ALL 5 Council seats (Founder + 4 Bootstrap Council Seats 2-5). Council Lv7+ unanimity is a constitutional invariant per ADR-2605192300 + ADR-2605282200 G14.",
+            "items": { "type": "string", "format": "did" }
+          },
+          "activatedAt": { "type": "string", "format": "datetime" },
+          "supersedes": {
+            "type": "string",
+            "description": "Optional CID of a previous jurisdictionAttestation for the same (jurisdiction, activatedFor) pair that this one replaces. Used when legal analysis updates (e.g., new regulator guidance) without re-doing the Council Lv7+ ceremony from scratch — supersession still requires Lv7+ unanimity."
+          }
+        }
+      }
+    }
+  }
+}

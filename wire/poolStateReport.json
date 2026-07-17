@@ -1,0 +1,68 @@
+{
+  "lexicon": 1,
+  "id": "com.etzhayyim.kawase.poolStateReport",
+  "description": "Periodic per-currency aggregate pool report Lexicon per ADR-2605282200 L2 — emitted hourly (R1) / per-15-min (R2) / per-5-min (R3) by Pregel cell `kawase_pool_match` as a transparency artifact. Aggregate-only: NO per-member amounts, NO per-tx breakdowns. Toritate.annualReport consumes the sum-aggregate across epochs for the religious-corp annual transparency disclosure.",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "v",
+          "epoch",
+          "currency",
+          "balanceMinor",
+          "inFlightMinor",
+          "reserveBufferFloorMinor",
+          "driftBps",
+          "matchCountThisEpoch",
+          "reserveDisbursedCountThisEpoch",
+          "mKotoConsumedThisEpoch",
+          "reportedAt"
+        ],
+        "properties": {
+          "v": { "type": "integer", "minimum": 1, "maximum": 1 },
+          "epoch": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Reporting epoch (monotonic per currency)."
+          },
+          "currency": {
+            "type": "string",
+            "enum": ["USDC", "EURC", "JPYC", "KRWO", "GBPe", "CHFe"]
+          },
+          "balanceMinor": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total pool balance held in KawaseYuiPool<currency> at epoch close (minor units)."
+          },
+          "inFlightMinor": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Sum of deposits with intents still unmatched at epoch close (minor units)."
+          },
+          "reserveBufferFloorMinor": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Minimum reserve buffer required per current sizing rule. R1 = $5_000 per pool; R2 = $50_000; R3 = $500_000 aggregate. If balanceMinor falls below this floor, new deposits halt for the pair until rebalance restores."
+          },
+          "driftBps": {
+            "type": "integer",
+            "minimum": -10000,
+            "maximum": 10000,
+            "description": "Cumulative drift between paired pools in basis points (signed; positive = this pool is in surplus relative to its mid-market peg). When |driftBps| > 500, kawase_rebalance_proposer emits a rebalanceAttestation candidate for Council ≥4/7 sign-off."
+          },
+          "matchCountThisEpoch": { "type": "integer", "minimum": 0 },
+          "reserveDisbursedCountThisEpoch": { "type": "integer", "minimum": 0 },
+          "mKotoConsumedThisEpoch": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "mKOTO debited from operator DID this epoch for pool_match cell ticks (sum across all matches)."
+          },
+          "reportedAt": { "type": "string", "format": "datetime" }
+        }
+      }
+    }
+  }
+}

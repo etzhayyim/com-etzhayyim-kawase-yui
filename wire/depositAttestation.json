@@ -1,0 +1,85 @@
+{
+  "lexicon": 1,
+  "id": "com.etzhayyim.kawase.depositAttestation",
+  "description": "Sender-side L1 Quad per ADR-2605282200 — CACAO-signed by sender DID at the moment a kawase-yui send intent is materialized into an on-chain deposit. Carries the locked mid-market FX rate (with the fxRateAttestation CID for verification), the per-month cap consumption snapshot, and the optional encrypted memo CID per ADR-2605181100. The on-chain `Deposited` event on `KawaseYuiPool.sol` cross-references this AT Record by `intentCid` so any third party can replay the flow via MST traversal without a chain indexer.",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "v",
+          "senderDid",
+          "recipientDid",
+          "srcStable",
+          "tgtStable",
+          "srcAmountMinor",
+          "tgtAmountMinorQuoted",
+          "fxRateBps",
+          "fxRateAttestationCid",
+          "intentCid",
+          "depositTxHash",
+          "blockNumber",
+          "perMonthCapRemainingMinor",
+          "depositedAt"
+        ],
+        "properties": {
+          "v": { "type": "integer", "minimum": 1, "maximum": 1 },
+          "senderDid": { "type": "string", "format": "did" },
+          "recipientDid": { "type": "string", "format": "did" },
+          "srcStable": {
+            "type": "string",
+            "enum": ["USDC", "EURC", "JPYC", "KRWO", "GBPe", "CHFe"],
+            "description": "Source stablecoin symbol. R1 enum = USDC + EURC only; JPYC unlocks R2; KRWO/GBPe/CHFe unlock R3 with per-jurisdictionAttestation Council Lv7+ unanimity."
+          },
+          "tgtStable": {
+            "type": "string",
+            "enum": ["USDC", "EURC", "JPYC", "KRWO", "GBPe", "CHFe"]
+          },
+          "srcAmountMinor": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9223372036854775807,
+            "description": "Source amount in minor units (USDC/EURC 6-decimal; JPYC 18-decimal native). Sender MUST have approved the pool contract for this amount before deposit."
+          },
+          "tgtAmountMinorQuoted": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9223372036854775807,
+            "description": "Target amount in target-stable minor units, computed from srcAmountMinor × fxRateBps at intent creation. This is the LOCKED amount the recipient will receive (reserve buffer absorbs any subsequent oracle drift)."
+          },
+          "fxRateBps": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100000000,
+            "description": "Locked FX rate in basis points (10000 = 1.0000). For USD→EUR at 0.92, fxRateBps = 9200."
+          },
+          "fxRateAttestationCid": {
+            "type": "string",
+            "description": "CID of the com.etzhayyim.kawase.fxRateAttestation record this rate was sourced from (kotoba content-addressed)."
+          },
+          "intentCid": {
+            "type": "string",
+            "description": "kotoba content-addressed CID uniquely identifying this intent. Used as the keying field across deposit + matchExecution + claim chain."
+          },
+          "depositTxHash": {
+            "type": "string",
+            "description": "Base L2 KawaseYuiPool.deposit() tx hash."
+          },
+          "blockNumber": { "type": "integer", "minimum": 1 },
+          "perMonthCapRemainingMinor": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Sender's remaining per-month cap (USD-equivalent minor units) AFTER this deposit. Per G9. R1 default cap = 1_000_000_000 (= $1000); R2 = $5000; R3 = $25000. Higher caps require Council Lv6+ ≥3 per-member ADR."
+          },
+          "encryptedMemoCid": {
+            "type": "string",
+            "description": "Optional. CID of an com.etzhayyim.encrypted.envelope record per ADR-2605181100 (XChaCha20-Poly1305, recipient-DID-bound). Defaults absent (no memo)."
+          },
+          "depositedAt": { "type": "string", "format": "datetime" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "lexicon": 1,
+  "id": "com.etzhayyim.kawase.withdrawIntent",
+  "description": "Recipient-side L1 Quad per ADR-2605282200 — CACAO-signed by a potential recipient DID expressing an interest in receiving a particular stable on a particular pair. The match engine (Pregel cell kawase_pool_match) joins deposits against open withdrawIntents to find counter-flows that obviate the need for an on-chain DEX rebalance. WithdrawIntents are advisory (not binding); a deposit may still settle via reserve buffer if no matching intent is open at match epoch.",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "v",
+          "recipientDid",
+          "srcStable",
+          "tgtStable",
+          "minSrcAmountMinor",
+          "maxSrcAmountMinor",
+          "validUntil",
+          "intentCid",
+          "createdAt"
+        ],
+        "properties": {
+          "v": { "type": "integer", "minimum": 1, "maximum": 1 },
+          "recipientDid": {
+            "type": "string",
+            "format": "did",
+            "description": "DID of the adherent willing to be matched on this pair (i.e., to deposit srcStable in exchange for receiving tgtStable from a counter-deposit). Recipient MUST hold Adherent SBT per G3."
+          },
+          "srcStable": {
+            "type": "string",
+            "enum": ["USDC", "EURC", "JPYC", "KRWO", "GBPe", "CHFe"]
+          },
+          "tgtStable": {
+            "type": "string",
+            "enum": ["USDC", "EURC", "JPYC", "KRWO", "GBPe", "CHFe"]
+          },
+          "minSrcAmountMinor": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Smallest deposit (in srcStable minor units) the recipient is willing to match against. Default: full pool floor."
+          },
+          "maxSrcAmountMinor": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Largest deposit (in srcStable minor units) the recipient is willing to match against. Must NOT exceed recipient's own per-month cap (G9)."
+          },
+          "validUntil": {
+            "type": "string",
+            "format": "datetime",
+            "description": "Intent expiry. After this instant the match engine will not consider this intent. Default: createdAt + 30 days."
+          },
+          "intentCid": { "type": "string" },
+          "createdAt": { "type": "string", "format": "datetime" }
+        }
+      }
+    }
+  }
+}
