@@ -28,10 +28,10 @@ ADR-2605282100 economy. **No new token is minted.**
   / MTL / EMI / PI license sought. Structurally pinned to adherent
   mutual aid via the `onlyAdherent` Solidity modifier (G3 reverts
   `deposit()` + `claim()` when `AdherentRegistry.tokenOf(msg.sender) == 0`).
-- **NOT FX trading or arbitrage** (N2). Mid-market Chainlink rate is
-  locked at deposit time; spread profit is **structurally zero** —
-  `silenKawaseReview.spreadProfitMkoto` is a const-0 field at the
-  Lexicon schema layer.
+- **NOT proprietary FX trading or arbitrage** (N2). A bounded AMM may
+  provide continuous stable-pair liquidity. Price impact, disclosed LP
+  compensation and protocol revenue are accounted separately; operator-directed
+  protocol fee is zero at R1 and can never exceed the contract ceiling.
 - **NOT a fiat custodian** (N4 + G8). Religious-corp never holds fiat
   bank balances. Adherents on/off-ramp via their own exchange accounts;
   the pool only holds stablecoin ERC-20 positions.
@@ -46,7 +46,7 @@ ADR-2605282100 economy. **No new token is minted.**
 | Layer | Files | Tests |
 |---|---|---|
 | Lexicons (`lex/`) | 8 schemas (`depositAttestation` + `withdrawIntent` + `matchExecution` + `fxRateAttestation` + `poolStateReport` + `rebalanceAttestation` + `jurisdictionAttestation` + `silenKawaseReview`) | `validate-lexicons.py` 8/8 clean |
-| Solidity (`50-infra/etzhayyim-kawase-pool/`) | `src/KawaseYuiPool.sol` (R0 scaffold) + `foundry.toml` + `.gitignore` | 4/4 forge tests pass (constructor + G4 plumbing + G9 plumbing + R0 honesty) |
+| Solidity (`50-infra/etzhayyim-kawase-pool/`) | policy + exact-input v4 adapter + fresh Chainlink cross-rate/sequencer gate + codehash-pinned registry/observer | 27/27 forge tests pass (policy + lifecycle + oracle freshness/round/sequencer + one-shot callback + pause/deadline/registry/fee refusal) |
 | Python facade (`40-engine/kotoba_kawase/`) | `kotoba_kawase/__init__.py` + `kotoba_kawase/exceptions.py` (5 constitutional exceptions + KawaseError base) + `pyproject.toml` | 16/16 pytest pass (surface + R0 honesty + introspection + hierarchy + frozen dataclasses) |
 | Pregel cells (`40-engine/kotoba/crates/kotoba-kotodama/cells/kawase_*/`) | 5 cells (`pool_match` + `fx_oracle_watcher` + `rebalance_proposer` + `jurisdiction_compliance` + `silen_review`) | each raises `RuntimeError` on import per kotodama R0 convention |
 | Build-time lint (`70-tools/scripts/lint/`) | `verify_no_commercial_remittance.py` (G7) | 23/23 pytest pass; lefthook registered (`no-commercial-remittance`) |
@@ -60,8 +60,8 @@ ADR-2605282100 economy. **No new token is minted.**
 | G2 | kotoba attestation lineage MANDATORY | kotoba-datomic → kotoba per ADR-2605262130 |
 | G3 | Adherent-SBT-gated deposit + claim | **Solidity-level** `onlyAdherent` modifier in `KawaseYuiPool.sol` |
 | G4 | Mid-market Chainlink ±0.5% band | **Solidity-level** + **Constitution-level** const `KAWASE_MAX_BAND_BPS = 50` |
-| G5 | NO spread profit | **Lexicon-level** const-0 `silenKawaseReview.spreadProfitMkoto` |
-| G6 | Pool USDC/EURC/JPYC stable-only (no DeFi yield / no LP / no perp) | Pool contract has no swap/LP entry points |
+| G5 | No extractive or hidden protocol spread; LP compensation is disclosed separately | `protocolFeeBps` and `lpFeeBps` are distinct; R1 protocol fee = 0, hard cap = 5 bps, LP fee cap = 30 bps |
+| G6 | Stable-only bounded AMM; no leverage, rehypothecation, arbitrary hooks or perp exposure | Oracle deviation + price-impact + min-out + liquidity checks in `validateAmmQuote`; approved adapter/hook codehash at R1 |
 | G7 | NO commercial remittance MSB integration (Wise / Western Union / MoneyGram / Remitly / WorldRemit / Xoom / Revolut / OFX / Currencies Direct / Ria / Paysend / Atlantic Money / Sendwave / Boss Revolution / PayPal-Xoom / TransferWise) | **Build-time** `verify_no_commercial_remittance.py` lefthook gate |
 | G8 | NO fiat custody | Pool contract is non-custodial; only stablecoin ERC-20 |
 | G9 | Per-month USD-equivalent cap per member | **Constitution-level** mutable `KAWASE_PER_MONTH_CAP_USD_MINOR` |
@@ -89,13 +89,18 @@ lint hook materializes this: any future commit that imports `wise` /
 `remitly` / `moneygram` / `transferwise` / ... into a kawase runtime
 path fails `lefthook` pre-commit.
 
-## Why mid-market + reserve buffer instead of an AMM curve?
+## Why a constitutionally bounded AMM?
 
-A constant-product AMM (Uniswap style) necessarily creates spread (=
-LP fee), which is structurally market-making (G6 violation) and creates
-spread profit (G5 violation). Mid-market oracle + reserve buffer is
-the only structurally-compatible topology. The reserve buffer absorbs
-intra-epoch drift without leaking spread.
+An AMM curve creates observable price impact; it does not by itself create
+operator profit. LP compensation, protocol revenue and execution slippage are
+different quantities and MUST remain separate in the ledger and UI. Kawase-yui
+therefore permits constant-product or concentrated-liquidity adapters when the
+pair is an approved stable pair and every execution satisfies the Chainlink
+band, maximum price impact, participant `minAmountOut`, available-liquidity,
+fee-cap, deadline and approved hook-codehash gates. Leverage,
+rehypothecation, hidden routing and discretionary price overrides remain
+unrepresentable. The reserve buffer remains a complementary circuit breaker,
+not the sole constitutionally compatible topology.
 
 ## Cross-actor reverse-references
 
@@ -113,6 +118,7 @@ as follows:
 
 ## Related ADRs / Files
 
+- ADR-2608011200 — accepted bounded-AMM policy; supersedes ADR-2605282200 Alternative 8 and old G5/G6 wording
 - ADR-2605282200 — kawase-yui charter (this actor's authoritative ADR)
 - ADR-2605282100 — mKOTO economy (operator-side compute-cost layer)
 - ADR-2605263500 — wakai mutual aid (sibling actor)
