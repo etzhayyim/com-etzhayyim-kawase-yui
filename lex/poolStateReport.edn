@@ -19,6 +19,11 @@
      "matchCountThisEpoch"
      "reserveDisbursedCountThisEpoch"
      "mKotoConsumedThisEpoch"
+     "ammLiquidityMinor"
+     "lpFeeBps"
+     "protocolFeeBps"
+     "maxPriceImpactBps"
+     "circuitBreakerActive"
      "reportedAt"],
     "properties"
     {"mKotoConsumedThisEpoch"
@@ -26,6 +31,18 @@
       "minimum" 0,
       "description"
       "mKOTO debited from operator DID this epoch for pool_match cell ticks (sum across all matches)."},
+     "ammLiquidityMinor"
+     {"type" "integer", "minimum" 0,
+      "description" "Output-side liquidity available through the approved bounded-AMM adapter."},
+     "lpFeeBps"
+     {"type" "integer", "minimum" 0, "maximum" 30,
+      "description" "Disclosed liquidity-provider compensation; distinct from protocol revenue."},
+     "protocolFeeBps"
+     {"type" "integer", "minimum" 0, "maximum" 5,
+      "description" "Protocol revenue rate. R1 policy requires 0 even though the contract hard ceiling is 5."},
+     "maxPriceImpactBps"
+     {"type" "integer", "minimum" 0, "maximum" 50},
+     "circuitBreakerActive" {"type" "boolean"},
      "driftBps"
      {"type" "integer",
       "minimum" -10000,

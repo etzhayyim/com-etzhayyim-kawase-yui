@@ -16,12 +16,12 @@
    "enforcement"
    "Solidity-level + Constitution-level KAWASE_MAX_BAND_BPS=50"}
   {"id" "G5",
-   "name" "NO spread profit",
+   "name" "No extractive or hidden protocol spread",
    "enforcement"
-   "Lexicon-level silenKawaseReview.spreadProfitMkoto const 0"}
+   "Protocol fee and LP compensation are separate fields; R1 protocol fee=0, contract cap=5 bps, LP fee cap=30 bps"}
   {"id" "G6",
-   "name" "Pool stable-only (no DeFi)",
-   "enforcement" "Pool contract has no swap/LP entry points"}
+   "name" "Stable-only constitutionally bounded AMM",
+   "enforcement" "validateAmmQuote oracle-deviation, price-impact, min-out, available-liquidity and fee-cap checks; R1 adapter/hook allow-list"}
   {"id" "G7",
    "name"
    "NO commercial remittance MSB integration (Wise / Western Union / MoneyGram / Remitly / WorldRemit / Xoom / Revolut / OFX / Currencies Direct / Ria / Paysend / Atlantic Money / Sendwave / Boss Revolution / PayPal-Xoom / TransferWise)",
@@ -67,7 +67,15 @@
    "valueR3" "25000000000",
    "meaning"
    "G9 per-member monthly cap in USDC minor units (6 decimals)",
-   "amendmentThreshold" "Council Lv6+ ≥3 per R-cycle ramp"}},
+   "amendmentThreshold" "Council Lv6+ ≥3 per R-cycle ramp"},
+  "KAWASE_AMM_BOUNDS"
+  {"type" "contract-hard-ceilings",
+   "maxLpFeeBps" 30,
+   "maxProtocolFeeBps" 5,
+   "r1ProtocolFeeBps" 0,
+   "maxPriceImpactBps" 50,
+   "meaning" "LP compensation, protocol revenue and execution price impact are independent quantities",
+   "amendmentThreshold" "Contract replacement + Council Lv7+ unanimity"}},
  "integrates" ["chigiri" "toritate" "wakai"],
  "settlementTokens"
  {"r1" ["USDC" "EURC"],
@@ -94,7 +102,7 @@
   "siblingFraming" "etzhayyim:adr:2605263500",
   "computeCostLayer" "etzhayyim:adr:2605282100",
   "r0" "etzhayyim:adr:2605282200",
-  "r1" "reserved",
+  "r1" "etzhayyim:adr:2608011200",
   "r2" "reserved",
   "r3" "reserved"},
  "parentActor" nil,
@@ -124,7 +132,7 @@
   "WRITE — per pool_match cell tick mKOTO debit (operator DID)"},
  "displayNameEn" "Kawase-Yui",
  "descriptionJa"
- "Charter §1.5 + §2(b) + ADR-2605282100 N2 + ADR-2605172100 Alt C のもとでの religious-corp adherent 間 multi-stable 送金 substrate。TransferWise の pre-funded local-pool topology を constitutional 制約下に翻訳。Base L2 stablecoin (R1 = USDC+EURC; R2 +JPYC; R3 +KRWO/GBPe/CHFe Council Lv7+ unanimity per pair) のみ settlement、新規 token は鋳造しない。商業 MSB ではなく、FX trading でもなく、fiat custody もせず、Travel Rule にも従わない (SBT が KYC を構造的に置換)。14 不変ゲート + 12 non-goals + 8 Lexicons + 5 Pregel cells + 1 Solidity scaffold + 1 Python facade + 1 build-time G7 lint hook。",
+ "Charter §1.5 + §2(b) + ADR-2605282100 N2 + ADR-2605172100 Alt C のもとでの religious-corp adherent 間 multi-stable 送金 substrate。Base L2 stablecoin の constitutionally bounded AMM を許可し、LP報酬・protocol収益・価格影響を分離して記録する。R1 protocol fee は0、hard cap 5bps、LP fee cap 30bps、oracle乖離/price impact cap 50bps。新規token、レバレッジ、再担保、任意hook、非開示routingは禁止。",
  "tier" "Tier-B",
  "tokenCustomMintForbidden"
  "ADR-2605172100 Alt C — no custom token; settlement always via canonical Base L2 stablecoins",
@@ -138,11 +146,11 @@
   "NOT fiat custody"
   "NOT cross-jurisdictional MSB"
   "NOT speculative finance per Charter Rider §2(b)"
-  "NOT a DEX aggregator"
+  "NOT an unrestricted DEX aggregator"
   "NOT Travel-Rule / FATF compliant on passport ID"
   "NOT chargeback / NOT fraud reversal"
-  "NOT yield farming on pool capital"
+  "NOT leveraged or rehypothecated yield farming on pool capital"
   "NOT loan / NOT credit issuance"
   "NOT minting a new stablecoin / NOT minting a new token"],
  "description"
- "Religious-corp adherent-to-adherent multi-stable remittance built on a pre-funded local-currency pool topology under Charter §1.5 anti-commercialization + §2(b) speculative finance prohibition + ADR-2605282100 N2 mKOTO non-transferability + ADR-2605172100 Alt C no-custom-token. Settlement via canonical Base L2 stablecoins (USDC + EURC at R1; +JPYC R2; +KRWO/GBPe/CHFe R3 with Council Lv7+ per pair). NO new token. NOT a commercial MSB (G14+N1+N5). NOT FX trading (G5 const-0 spread). NOT a fiat custodian (G8+N4). NOT Travel-Rule KYC (N8+G10; Adherent SBT IS the KYC). NOT chargeback (G11+N9; chigiri.disputeMediation cooperative-first instead). 14 immutable gates + 12 non-goals + 8 Lexicons + 5 Pregel cells + 1 Solidity scaffold + 1 Python facade + 1 build-time G7 lint hook."}
+ "Religious-corp adherent-to-adherent multi-stable remittance with a constitutionally bounded AMM over canonical Base L2 stablecoins. The design permits constant-product or concentrated liquidity while separating LP compensation, protocol revenue and price impact. R1 protocol fee is zero; hard ceilings and oracle/min-out/liquidity checks prevent extractive operation. No new token, leverage, rehypothecation, arbitrary hooks, hidden routing, fiat custody or proprietary arbitrage."}

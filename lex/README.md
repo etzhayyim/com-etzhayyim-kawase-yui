@@ -28,12 +28,16 @@ layer. R1 wiring lands post-Bootstrap-Council Seats 2-5 close
   the rest with per-pair Council Lv7+ unanimity per L7
 - L4 pair enum `["USD/EUR", "USD/JPY", "USD/KRW", "USD/GBP",
   "USD/CHF", "EUR/JPY", "EUR/GBP", "GBP/CHF"]` — R1 launch USD/EUR only
-- L6 swap caps Solidity-enforced: swapAmount ≤10% of weaker pool;
-  swapRate within ±100 bps of Chainlink
+- L6 bounded-AMM caps Solidity-enforced: LP fee ≤30 bps, protocol fee
+  ≤5 bps (R1=0), oracle-relative price impact ≤50 bps, participant
+  min-out and available output liquidity
 - L7 `councilAttestations` `minLength: 5` STRUCTURAL — all 5 Council
   seats must sign for jurisdiction activation (Council Lv7+ unanimity)
 - L8 const-field structural enforcement:
-  - `spreadProfitMkoto` const **0** (G5 — mid-market only)
+  - `spreadProfitMkoto` const **0** (deprecated compatibility name for
+    undisclosed operator spread; not LP compensation)
+  - `lpCompensationUsdEquivalentMinor` — disclosed, bounded LP reward
+  - `protocolRevenueUsdEquivalentMinor` const **0** at R1
   - `commercialRemittanceSoftwarePenetrationPct` const **0** (G7 —
     build-time enforced by
     `70-tools/scripts/lint/verify_no_commercial_remittance.py`)
