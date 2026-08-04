@@ -1,7 +1,7 @@
 {"lexicon" 1,
  "id" "com.etzhayyim.kawase.silenKawaseReview",
  "description"
- "Quarterly Council audit Lexicon per ADR-2605282200 G5 + G7 — emitted by Pregel cell `kawase_silen_review` and counter-signed by Council Lv6+ ≥3 attestation chain. Includes const-field structural enforcement of the most critical gates: spreadProfitMkoto const 0 (G5), commercialRemittanceSoftwarePenetrationPct const 0 (G7), nonAdherentParticipationCount const 0 (G3). Any nonzero value in these const fields = critical finding, halts pool operations, triggers chigiri.disputeMediation + Council Lv7+ escalation.",
+ "Quarterly Council audit Lexicon per ADR-2605282200 G5-G7. AMM price impact, disclosed LP compensation and protocol revenue are independent fields. undisclosedOperatorSpreadMkoto remains const 0; LP compensation may be nonzero within policy, while R1 protocol revenue is zero.",
  "defs"
  {"perCcyVolumeRow"
   {"type" "object",
@@ -26,6 +26,10 @@
      "avgMatchWaitSeconds"
      "outOfBandHaltCount"
      "spreadProfitMkoto"
+     "lpCompensationUsdEquivalentMinor"
+     "protocolRevenueUsdEquivalentMinor"
+     "maxObservedPriceImpactBps"
+     "ammCircuitBreakerCount"
      "commercialRemittanceSoftwarePenetrationPct"
      "nonAdherentParticipationCount"
      "jurisdictionsActivated"
@@ -61,7 +65,19 @@
       "minimum" 0,
       "maximum" 0,
       "description"
-      "G5 STRUCTURAL: const 0. Any nonzero value invalidates this report at schema layer and indicates a constitutional violation (mid-market only invariant breached)."},
+      "G5 STRUCTURAL: deprecated compatibility name for undisclosed operator spread; const 0. This is not LP compensation and not disclosed protocol revenue."},
+     "lpCompensationUsdEquivalentMinor"
+     {"type" "integer", "minimum" 0,
+      "description" "Disclosed LP compensation accrued during the period. Nonzero is permitted within the 30 bps per-swap ceiling."},
+     "protocolRevenueUsdEquivalentMinor"
+     {"type" "integer", "minimum" 0, "maximum" 0,
+      "description" "R1 protocol revenue is structurally zero. A later nonzero value requires a versioned Lexicon and constitutional amendment and remains capped on-chain."},
+     "maxObservedPriceImpactBps"
+     {"type" "integer", "minimum" 0, "maximum" 50,
+      "description" "Maximum execution deviation from the attested oracle during the period."},
+     "ammCircuitBreakerCount"
+     {"type" "integer", "minimum" 0,
+      "description" "Count of oracle, liquidity, min-out, deadline or approved-adapter/hook guard trips."},
      "reviewPeriodStart" {"type" "string", "format" "datetime"},
      "commercialRemittanceSoftwarePenetrationPct"
      {"type" "integer",

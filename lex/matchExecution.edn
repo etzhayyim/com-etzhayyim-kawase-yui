@@ -1,7 +1,7 @@
 {"lexicon" 1,
  "id" "com.etzhayyim.kawase.matchExecution",
  "description"
- "Match engine output Lexicon per ADR-2605282200 — emitted by Pregel cell `kawase_pool_match` once per matched deposit. Records WHICH of the two settlement modes was used (matched against a counter-intent vs disbursed from reserve buffer), the mKOTO debit accrued for the cell's compute, and the FX rate attestation CID for replay. silenKawaseReview aggregates these to compute matchedSharePctIntegerHundredths (G5 target ≥80% at R2+).",
+ "Settlement evidence per ADR-2608011200. Records counter-intent, reserve-buffer or bounded-AMM execution. bounded-amm records MUST include adapter/codehash, fee, oracle/execution rate, price-impact, min-out and deadline fields so LP compensation, protocol revenue and slippage remain independently auditable.",
  "defs"
  {"main"
   {"type" "record",
@@ -24,9 +24,23 @@
     "properties"
     {"settlementMode"
      {"type" "string",
-      "enum" ["matched" "reserve-disbursed"],
+      "enum" ["matched" "reserve-disbursed" "bounded-amm"],
       "description"
-      "matched = counter withdrawIntent satisfied the deposit (no reserve consumed). reserve-disbursed = no counter intent within match_window_seconds; reserve buffer disbursed at locked rate. Pool drift_bps increments on reserve-disbursed flows."},
+      "matched = counter intent; reserve-disbursed = reserve buffer; bounded-amm = approved stable-pair AMM adapter under ADR-2608011200."},
+     "ammAdapter" {"type" "string"},
+     "adapterCodehash" {"type" "string"},
+     "hookCodehash" {"type" "string"},
+     "lpFeeBps" {"type" "integer", "minimum" 0, "maximum" 30},
+     "protocolFeeBps" {"type" "integer", "minimum" 0, "maximum" 5},
+     "oracleContract" {"type" "string"},
+     "oracleCodehash" {"type" "string"},
+     "oracleRateBps" {"type" "integer", "minimum" 1},
+     "oracleObservedAt" {"type" "string", "format" "datetime"},
+     "sequencerUptimeFeed" {"type" "string"},
+     "executionRateBps" {"type" "integer", "minimum" 1},
+     "priceImpactBps" {"type" "integer", "minimum" 0, "maximum" 50},
+     "minAmountOutMinor" {"type" "integer", "minimum" 1},
+     "deadline" {"type" "string", "format" "datetime"},
      "executingCellDid"
      {"type" "string",
       "format" "did",

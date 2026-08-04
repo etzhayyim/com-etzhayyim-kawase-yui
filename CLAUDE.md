@@ -28,9 +28,12 @@ layer so violations are caught early:
    `KAWASE_MAX_BAND_BPS = 50`. Solidity `deposit()` revert + Pregel
    cell `kawase_fx_oracle_watcher` halt on out-of-band. Constitutional
    — cannot be widened by governance.
-3. **NO spread profit (G5)** — `silenKawaseReview.spreadProfitMkoto`
-   const **0** at the Lexicon schema layer. Audit-time mirror of the
-   Solidity invariant that rate is locked at `deposit()` time.
+3. **NO extractive protocol spread (G5/G6)** — AMM price impact,
+   disclosed LP compensation and protocol revenue are independent.
+   R1 protocol revenue is zero; the Solidity hard ceilings are 5 bps
+   protocol fee, 30 bps LP fee and 50 bps oracle-relative price impact.
+   `spreadProfitMkoto` remains a deprecated const-0 compatibility field
+   meaning undisclosed operator spread, not LP compensation.
 4. **NO commercial remittance MSB integration (G7)** — Wise /
    TransferWise / Western Union / MoneyGram / Remitly / WorldRemit /
    Xoom / Revolut / OFX / Currencies Direct / Ria / Paysend /
@@ -96,7 +99,7 @@ rebalance / jurisdiction / silen review.
 
 | Layer | Tests | Pass count |
 |---|---|---|
-| KawaseYuiPool.sol | forge tests (constructor + G4 plumbing + G9 plumbing + R0 honesty) | 4/4 |
+| KawaseYuiPool.sol | forge tests (wiring + oracle band + bounded fee/price-impact/min-out policy) | 8/8 |
 | kotoba_kawase R0 | pytest (surface + R0 honesty + introspection + hierarchy + frozen dataclasses) | 16/16 |
 | kotoba_kawase composition | pytest (cross-layer + cross-actor + documentation) | 16/16 |
 | G7 lint hook | pytest (each vendor caught + URL caught + docstring not caught + allow-list + unguarded path) | 23/23 |
