@@ -116,6 +116,23 @@ as follows:
   (ledgerEntry purpose=kawase-mutual-aid; annual silenKawaseReview
   cross-references toritate.annualReport)`
 
+## Migration Boundary
+
+`src/kawase_yui/murakumo.cljc` is the current Murakumo-facing actor boundary for the
+five legacy `kawase_*` kotoba-kotodama cells. It preserves the Python facade as an
+R0 scaffold, but moves the domain actor contract into cljc data plans:
+
+- `kawase_pool_match` -> `depositAttestation`, `withdrawIntent`, `matchExecution`
+- `kawase_fx_oracle_watcher` -> `fxRateAttestation`
+- `kawase_rebalance_proposer` -> `rebalanceAttestation`, `poolStateReport`
+- `kawase_jurisdiction_compliance` -> `jurisdictionAttestation`
+- `kawase_silen_review` -> `silenKawaseReview`
+
+Every plan is blocked until Adherent-SBT, Chainlink mid-market band, zero-spread,
+stable-only, no-commercial-remittance, no-fiat-custody, per-month-cap,
+no-chargeback, Murakumo-only, kotoba-only, and Council Lv7 jurisdiction
+attestations are present.
+
 ## Related ADRs / Files
 
 - ADR-2608011200 — accepted bounded-AMM policy; supersedes ADR-2605282200 Alternative 8 and old G5/G6 wording
