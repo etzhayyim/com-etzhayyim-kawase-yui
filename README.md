@@ -118,7 +118,7 @@ as follows:
 
 ## Migration Boundary
 
-`src/kawase_yui/murakumo.cljc` is the current Murakumo-facing actor boundary for the
+`src/kawase_yui/murakumo.cljk` is the current Murakumo-facing actor boundary for the
 five legacy `kawase_*` kotoba-kotodama cells. It preserves the Python facade as an
 R0 scaffold, but moves the domain actor contract into cljc data plans:
 
