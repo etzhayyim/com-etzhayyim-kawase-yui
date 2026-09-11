@@ -1,6 +1,6 @@
 #!/usr/bin/env nbb
 ;; nbb replacement for the retired bb.edn `test` task (ADR-2607173000).
-;; Run with: nbb --classpath src:test run-murakumo-tests.cljs
+;; Run with: nbb --classpath src:test run-murakumo-tests.cljk
 (ns run-murakumo-tests
   (:require [clojure.test :as t]
             [kawase-yui.murakumo-test]))
